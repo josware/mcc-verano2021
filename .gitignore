@@ -1,3 +1,11 @@
+#
+#
+#Local Session file
+inivars.txt
+
+#Very Big File
+denue_inegi_14_2021_may.csv
+
 # History files
 .Rhistory
 .Rapp.history
