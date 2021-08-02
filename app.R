@@ -13,6 +13,7 @@ library(rpivotTable)
 
 #Neceistas definir en este archivo tu directorio de trabajo i.e. directorio.de.trabajo <- "SU_DIRECTORIO_DE_TRABAJO"
 source("inivars.txt")
+source("simReqs.R")
 setwd(directorio.de.trabajo)
 
 Sys.setlocale("LC_ALL", 'es_ES')
