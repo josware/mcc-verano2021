@@ -156,7 +156,7 @@ limite.superior.relevancia <- 2
 
 
 #carrera <- "Ingenieria en Sistemas Computacionales"
-carrera <- "Administracion"
+#carrera <- "Administracion"
 ramas.relevantes.a.la.carrera <- function(carrera) {
   # carreras.l4.data <- read.csv(archivo.mapeo.carreras.l4,stringsAsFactors = F)
   vector.de.trabajo <- carreras.l4.data[carreras.l4.data$Carrera==carrera,]
@@ -221,7 +221,7 @@ datos.fuente <- datos.region.actual
 colnames(datos.fuente)
 head(datos.fuente)
 
-carrera <- "Administracion"
+#carrera <- "Administracion"
 datos.para.proyeccion.carrera.region <- function(datos.fuente, carrera, region) {
   # este es el archivo de mapeo que trabajamos al inicio
   ventana.prediccion <- 15.5

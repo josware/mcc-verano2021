@@ -316,6 +316,8 @@ corre.simulacion <- function(n) {
   return(data.frame(result=result))
 
 }
+proyeccion.agregada
+proyeccion.agregada$Administracion[11:21]
 
 save(corre.simulacion, file="corre.simulacion.R")
 

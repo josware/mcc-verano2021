@@ -13,7 +13,7 @@ library(rpivotTable)
 
 #Neceistas definir en este archivo tu directorio de trabajo i.e. directorio.de.trabajo <- "SU_DIRECTORIO_DE_TRABAJO"
 source("inivars.txt")
-source("simReqs.R")
+#source("simReqs.R")
 setwd(directorio.de.trabajo)
 
 Sys.setlocale("LC_ALL", 'es_ES')
@@ -35,15 +35,15 @@ load("metricas.educacion.por.municipio.R")
 load("metricas.educacion.media.por.municipio.R")
 #load("calcula.datos.educativos.R")
 load("denue.base.sel.aggCOSTA SUR.R")
-load("terminos.ecuacion.R")
+#load("terminos.ecuacion.R")
 load("datos.completos.R")
 load("proyeccion.agregadaCOSTA SUR.R")
-load("aplica.formula.R")
+#load("aplica.formula.R")
 load("corre.simulacion.R")
 load("proyeccionesCOSTA SIERRA OCCIDENTAL.R")
 load("corre.simulacion.R")
 #load("aplica.formula.R")
-load("terminos.ecuacion.R")
+#load("terminos.ecuacion.R")
 load("datos.completos.R")
 load(paste0("proyeccion.agregada",region,".R"))
 
@@ -52,6 +52,7 @@ carreras.mario.molina.total.sel <- read.csv("carreras.mario.molina.total.sel.csv
 
 #Objects
 carreras.mario.molina.total.sim <- carreras.mario.molina.total.sel[carreras.mario.molina.total.sel$MUNICIPIO %in% municipios.actual,]
+
 
 #FUNCIONES
 calcula.datos.educativos <- function(carrera) {
@@ -79,45 +80,33 @@ calcula.datos.educativos <- function(carrera) {
   return(data.frame(matricula.actual=matricula.actual, competencia.directa=competencia.directa, estudiantes.bachillerato=estudiantes.bachillerato))
 }
 
-clean.terminos.ecuacion <- function() {
-  termino <- "J05"
-  signo <- 1
-  coeficiente <- 25
-  termino.nuevo <- data.frame(termino=termino, signo=signo, coeficiente=coeficiente)
-  terminos.ecuacion <- termino.nuevo
-  terminos.ecuacion <- terminos.ecuacion[-1,]
-  save(terminos.ecuacion,file="terminos.ecuacion.R")
-}
+# clean.terminos.ecuacion <- function() {
+#   termino <- "J05"
+#   signo <- 1
+#   coeficiente <- 25
+#   termino.nuevo <- data.frame(termino=termino, signo=signo, coeficiente=coeficiente)
+#   terminos.ecuacion <- termino.nuevo
+#   terminos.ecuacion <- terminos.ecuacion[-1,]
+#   #save(terminos.ecuacion,file="terminos.ecuacion.R")
+#   session$userData$terminos.ecuacion <- terminos.ecuacion
+# }
 
 
 datos.educativos <- calcula.datos.educativos(carrera)
 datos.completos <- cbind(datos.educativos,denue.base.sel.agg)
 
 
-termino <- "BASE"
-signo <- 1
-coeficiente <- 1
-termino.nuevo <- data.frame(termino=termino, signo=signo, coeficiente=coeficiente)
-terminos.ecuacion <- termino.nuevo
+#termino <- "BASE"
+#signo <- 1
+#coeficiente <- 1
+#termino.nuevo <- data.frame(termino=termino, signo=signo, coeficiente=coeficiente)
+#terminos.ecuacion <- termino.nuevo
 #terminos.ecuacion <- terminos.ecuacion[-1,]
-
-# aplica.formula <- function(terminos.ecuacion, n) {
-#   calculo.intermedio <- 0
-#   if(length(terminos.ecuacion) > 0 ){
-#   for (i in 1:nrow(terminos.ecuacion)) {
-#     valor.termino <- datos.completos[[terminos.ecuacion[i,"termino"]]]
-#     valor.termino <- valor.termino * terminos.ecuacion[i,"signo"] * terminos.ecuacion[i,"coeficiente"] * n
-#     #print(valor.termino)
-#     calculo.intermedio <- calculo.intermedio + valor.termino
-#     #print(calculo.intermedio)
-#   }
-#   }
-#   return(calculo.intermedio)
-# }
+#session$userData$terminos.ecuacion <- terminos.ecuacion
 
 
 #Prep
-clean.terminos.ecuacion ()
+#clean.terminos.ecuacion ()
 dbHeader <- dashboardHeader(title = titulo)
 
 #,
@@ -161,11 +150,18 @@ ui <- dashboardPage(skin="purple",
                 )
               ),
               fluidRow(
-                tableOutput("parametroseducativos")
+                box( 
+                  title = "Detalles Carrera",
+                  width = 12,
+                  tableOutput("parametroseducativos")
+                )
               ),
              fluidRow(
-               box(
-                 tableOutput("terminosecuacion") ))
+               box( 
+                 title = "Parametros Ecuación",
+                 width = 12,
+                 tableOutput("terminosecuacion") )
+               )
              # fluidRow(
              #   tableOutput("cleaned")
              #)
@@ -235,23 +231,49 @@ ui <- dashboardPage(skin="purple",
 )
 
 server <- function(input, output, session) {
-  datos.primarios.pivote <- reactive({
-   
-  })
   
-   output$pivoteconomia <- renderRpivotTable({
-   
-   }) 
+  #???
+  datos.primarios.pivote <- reactive({})
+  output$pivoteconomia <- renderRpivotTable({}) 
+  listado.carreras.centros <- reactive({})
+  observe({})
   
-  listado.carreras.centros <- reactive({
-    
-  })
-  
-  observe({
-    
-  })
-  
+  #Reultados Simulacion
   resultados.simulacion <- eventReactive(input$simulate, {
+    
+    load("datos.completos.R")
+    region <- "SIERRA OCCIDENTAL"
+    load(paste0("proyeccion.agregada",region,".R"))
+    
+    aplica.formula <- function(terminos.ecuacion, n) {
+      calculo.intermedio <- 0
+      for (i in 1:nrow(terminos.ecuacion)) {
+        valor.termino <- datos.completos[[terminos.ecuacion[i,"termino"]]]
+        valor.termino <- valor.termino * terminos.ecuacion[i,"signo"] * terminos.ecuacion[i,"coeficiente"] * n
+        #print(valor.termino)
+        calculo.intermedio <- calculo.intermedio + valor.termino
+        #print(calculo.intermedio)
+      }
+      return(calculo.intermedio)
+    }
+    
+    
+    corre.simulacion <- function(n) {
+      Output <- aplica.formula(session$userData$terminos.ecuacion, 1)
+      ### deben resolver este mapeo, ahorita está hardcodeado. 
+      datos.proyeccion <- proyeccion.agregada$Administracion[11:21]
+      generator <- function(steps,n){
+        for(i in 2:(steps)){
+          Output[i] <- mean(Output[i-1]+aplica.formula(session$userData$terminos.ecuacion, n)) + datos.proyeccion[i] ## cómo usan los datos de la proyección?
+        }
+        return(data.frame(Output = Output))
+      }
+      result <- generator(steps=n, n=1.05)
+      return(data.frame(result=result))
+      
+    }
+    
+    
     corre.simulacion(input$tiempo)
   })
   
@@ -292,9 +314,10 @@ server <- function(input, output, session) {
       }
       coeficiente <- input$coeficiente
       termino.nuevo <- data.frame(termino=termino, signo=signo, coeficiente=coeficiente)
-      terminos.ecuacion <- rbind(terminos.ecuacion, termino.nuevo)
-      save(terminos.ecuacion,file="terminos.ecuacion.R")
-      return(terminos.ecuacion)
+      #terminos.ecuacion <- rbind(terminos.ecuacion, termino.nuevo)
+      session$userData$terminos.ecuacion <- rbind(session$userData$terminos.ecuacion, termino.nuevo)
+      #save(terminos.ecuacion,file="terminos.ecuacion.R")
+      return(session$userData$terminos.ecuacion)
   })
   
   # clean.terminos.ecuacion <- eventReactive(input$cleanequation, {
@@ -325,7 +348,7 @@ server <- function(input, output, session) {
   
   output$terminosecuacion <- renderTable({
     if(input$cleanequation == 1) {
-      clean.terminos.ecuacion()
+      #clean.terminos.ecuacion()
       session$reload()
       NULL
       #rm(terminos.ecuacion)
