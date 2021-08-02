@@ -1,0 +1,7 @@
+required.packages <- c("dplyr", "ggplot2", "reshape2", "rpivotTable", "shiny", "shinydashboard", "shinythemes", "treemap", "tidyr", "FinancialMath")
+
+new.packages <- required.packages[!(required.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+
+

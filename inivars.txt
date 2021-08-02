@@ -1,0 +1,1 @@
+directorio.de.trabajo <- "/Users/jos/Library/Mobile Documents/com~apple~CloudDocs/_Training/Maestrias y Doctorados/MCC ITESM/Verano 2021/R/mcc-verano2021"
