@@ -1,7 +1,13 @@
 ## app.R ##
 #Revisa la lista de paquetes requeridos antes de mandarlos llamar
 source("installRequiredPackages.txt")
+#Neceistas definir en este archivo tu directorio de trabajo i.e. directorio.de.trabajo <- "SU_DIRECTORIO_DE_TRABAJO"
+source("inivars.txt")
+#source("simReqs.R")
+setwd(directorio.de.trabajo)
+Sys.setlocale("LC_ALL", 'es_ES')
 
+#Loads
 library(shiny)
 library(shinydashboard)
 library(dplyr)
@@ -10,14 +16,6 @@ library(reshape2)
 library(ggplot2)
 library(shinythemes)
 library(rpivotTable)
-
-#Neceistas definir en este archivo tu directorio de trabajo i.e. directorio.de.trabajo <- "SU_DIRECTORIO_DE_TRABAJO"
-source("inivars.txt")
-#source("simReqs.R")
-setwd(directorio.de.trabajo)
-
-Sys.setlocale("LC_ALL", 'es_ES')
-
 
 #Vars
 titulo <- "Simulador SIERRA OCCIDENTAL 1.0"
@@ -29,22 +27,20 @@ municipios.actual <- municipios.sierra.occidental
 carrera <- "LICENCIATURA EN ADMINISTRACIÓN"
 
 #Loads
-load("nombres.carreras.R")
+#load("nombres.carreras.R")
 #load("carreras.mario.molina.total.sel.R")
 load("metricas.educacion.por.municipio.R")
 load("metricas.educacion.media.por.municipio.R")
 #load("calcula.datos.educativos.R")
 load("denue.base.sel.aggCOSTA SUR.R")
 #load("terminos.ecuacion.R")
-load("datos.completos.R")
-load("proyeccion.agregadaCOSTA SUR.R")
+#load("datos.completos.R")
+#load("proyeccion.agregadaCOSTA SUR.R")
 #load("aplica.formula.R")
-load("corre.simulacion.R")
+#load("corre.simulacion.R")
 load("proyeccionesCOSTA SIERRA OCCIDENTAL.R")
-load("corre.simulacion.R")
 #load("aplica.formula.R")
 #load("terminos.ecuacion.R")
-load("datos.completos.R")
 load(paste0("proyeccion.agregada",region,".R"))
 
 #CSV
@@ -55,6 +51,14 @@ carreras.mario.molina.total.sim <- carreras.mario.molina.total.sel[carreras.mari
 
 
 #FUNCIONES
+ genera.nombres.carrera <- function(){
+   #carreras.mario.molina.total.sim <- carreras.mario.molina.total.sel[carreras.mario.molina.total.sel$MUNICIPIO %in% municipios.actual,]
+   nombres.carreras <- unique(carreras.mario.molina.total.sim$CARRERA)
+   return(nombres.carreras)
+ }
+
+ nombres.carreras <- genera.nombres.carrera()
+ 
 calcula.datos.educativos <- function(carrera) {
   carrera.simulacion <- carreras.mario.molina.total.sel[carreras.mario.molina.total.sel$CARRERA==carrera,]$categoria.carrera[1]
   datos.actuales.carrera <- carreras.mario.molina.total.sim[carreras.mario.molina.total.sim$categoria.carrera == carrera.simulacion,]
@@ -107,13 +111,12 @@ datos.completos <- cbind(datos.educativos,denue.base.sel.agg)
 
 #Prep
 #clean.terminos.ecuacion ()
-dbHeader <- dashboardHeader(title = titulo)
 
-#,
-# tags$li(a(href = '', onclick="window.close()",
-#           icon("power-off"),
-#           title = "Regresar a p??gina de inicio"),
-#         class = "dropdown")
+dbHeader <- dashboardHeader(title = titulo,
+                            tags$li(a(href = 'https://verano2021.josware.com/',
+                                      icon("home"),
+                                      title = "verano2021.josware.com/"),
+                                    class = "dropdown"))
 
 ui <- dashboardPage(skin="purple",
   dbHeader,
@@ -295,7 +298,7 @@ server <- function(input, output, session) {
   
   #DEFINE PARAMETROS
   variables.existentes <- eventReactive(input$defineparametros, {
-    load("carreras.mario.molina.total.sel.R")
+    #load("carreras.mario.molina.total.sel.R")
     datos.educativos <- colnames(calcula.datos.educativos(input$carrera))
     datos.educativos <- c(datos.educativos, colnames(denue.base.sel.agg)[-1])
   })
