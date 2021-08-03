@@ -139,11 +139,13 @@ ui <- dashboardPage(skin="purple",
               fluidRow(
                 box(
                   title = "Filtros",
+                  height = 300,
                   selectInput(inputId = "carrera", label = "Carrera", choices = nombres.carreras, selected = 1),
                   actionButton("defineparametros", "Definir Parametros")
                 ),
                 box(
                   title = "Agregar Termino",
+                  height = 300,
                   selectInput(inputId = "var.indepediente", label = "Variable", choices = NULL, selected = 1),
                   checkboxInput("negativo", "Es inversamente proporcional", value = FALSE, width = NULL),
                   numericInput("coeficiente", "Coeficiente", 10, min = 0, max = 100000),
@@ -176,11 +178,13 @@ ui <- dashboardPage(skin="purple",
              fluidRow(
                box(
                  title = "Parametros Simulacion",
+                 height = 175,
                  numericInput("tiempo", "Tiempo", 5, min = 1, max = 10),
                  actionButton("simulate", "Simular")
                ),
                box(
                  title = titulo,
+                 height = 175,
                  p("Autor: Josue Gómez"),
                  p("Verano 2021")
                )
@@ -188,10 +192,14 @@ ui <- dashboardPage(skin="purple",
                fluidRow(
                  box(
                    title = "Salida Simulacion (tabla)",
+                   collapsible = TRUE,
+                   collapsed = FALSE,
                    tableOutput("salidasimulacion") 
                  ),
                  box(
                  title = "Salida Simulacion (gráfica)",
+                 collapsible = TRUE,
+                 collapsed = FALSE,
                  plotOutput("plot1", click = "plot_click"),
                  verbatimTextOutput("info")
                  )
